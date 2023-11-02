@@ -12,7 +12,16 @@ function App() {
   const [song, setSong] = useState([]);
   const [keyword, setKeyword] = useState("");
 
-  const SearchHandle = async (word) => setKeyword(word);
+  const SearchHandle = async (word) => {
+
+    setKeyword(word)
+
+    if (word === "") {
+      setData(Data)
+    } else {
+      setData(data.filter(item => item.name.toLowerCase().includes(word.toLowerCase()) || item.artist.toLowerCase().includes(word.toLowerCase())))
+    }
+  };
 
   const AddToPlaylistHandle = async (songId) => song.includes(songId) ? console.log(`Dupplicate Song`) : setSong(() => {return [...song, songId]})
 
