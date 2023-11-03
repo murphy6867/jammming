@@ -4,8 +4,7 @@ const SearchResults = (props) => {
 
 
   return (
-    <div className='w-2/5 h-52 px-4 overflow-auto'>
-      <h1 className='text-3xl text-white font-bold my-3'>Results</h1>
+    <div className='w-4/5 h-[60vh] px-4 overflow-auto'>
       {props.tracks.map((song) => (
         <div key={song.id} className='w-full h-auto py-2 px-3 flex items-center justify-between border-b border-white bg-transparent '>
           <div>
@@ -13,7 +12,7 @@ const SearchResults = (props) => {
             <h2 className='text-stone-400'>{song.artists[0].name}</h2>
           </div>
           <button 
-            className='w-12 h-12 rounded-full text-white border-2'
+            className='w-8 h-8 rounded-full text-white border-2 hover:bg-white hover:text-black'
             onClick={() => props.addPlaylist(song)}>+</button>
         </div>
       ))}

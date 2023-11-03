@@ -79,7 +79,6 @@ function App() {
       let artistID = await fetch('https://api.spotify.com/v1/search?q=' + keyword + '&type=track', accessParameters)
       let data = await artistID.json()
       setResult(data.tracks.items)
-      console.log(result)
       
     } catch (error) {
       console.log(error)
@@ -89,13 +88,18 @@ function App() {
 
   return (
     <main className="w-screen h-screen flex flex-col items-center justify-start bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900">
-      <header className=" w-full h-full flex flex-col items-center justify-center gap-3 p-5 ">
+      <header className=" w-full h-54 flex flex-col items-center justify-center gap-3 p-5 ">
         <h1 className="text-4xl font-bold text-amber-300 m-4">Jammming application.</h1>
         <SearchBar searchFunc={SearchHandle} />
       </header>
-      <section className="w-4/5 h-full flex items-center justify-center bg-transparent">
-        <SearchResults tracks={result} addPlaylist={AddToPlaylistHandle} />
-        <Playlist favoriteSong={song} removePlaylist={RemovePlaylistHandle} createPL={CreatePlayList} PL={createPlaylist} playList={createPlaylist} />
+      <section className="w-full h-full flex items-center justify-center bg-transparent p-2 my-2">
+        <div className="w-full h-full flex flex-col items-center">
+          <h1 className='text-3xl text-white font-bold my-3'>Results</h1>
+          <SearchResults tracks={result} addPlaylist={AddToPlaylistHandle} />
+        </div>
+        <div className="w-full h-full flex justify-center">
+          <Playlist favoriteSong={song} removePlaylist={RemovePlaylistHandle} createPL={CreatePlayList} PL={createPlaylist} playList={createPlaylist} />
+        </div>
       </section>
     </main>
   )

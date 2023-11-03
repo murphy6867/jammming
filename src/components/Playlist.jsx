@@ -8,7 +8,7 @@ const Playlist = (props) => {
   const [plName, setPLName] = useState("");
 
   return (
-    <div className='w-2/5 h-full px-4'>
+    <div className='w-4/5 h-full px-4'>
       <h1 className='text-3xl text-white font-bold my-3'>Playlist</h1>
       <TrackList PlayList={props.playList} />
 
@@ -24,7 +24,7 @@ const Playlist = (props) => {
           </div>
         <button 
           onClick={() => props.removePlaylist(song)}
-          className='w-12 h-12 rounded-full text-white border-2'
+          className='w-8 h-8 rounded-full text-white border-2 hover:bg-white hover:text-black'
           >-</button>
       </div>
     ))}

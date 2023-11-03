@@ -11,7 +11,7 @@ const SearchBar = (props) => {
         onChange={(e) => setWord(e.target.value)}
         type="text" />
       <button 
-        className="text-2xl bg-sky-500 py-4 px-5 uppercase rounded-xl"
+        className="text-2xl bg-sky-500 py-3 px-4 uppercase rounded-xl hover:bg-amber-700 hover:text-white"
         onClick={() => props.searchFunc(word)}>Search</button>
     </div>
   )
