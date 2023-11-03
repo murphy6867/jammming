@@ -1,43 +1,101 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Playlist from "./components/Playlist";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResults";
-import Track from "./components/Track";
-import TrackList from "./components/TrackList";
-import Data from "./assets/data.js";
+// import Data from "./assets/data.js";
+
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID
+const CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET
+
 
 function App() {
 
-  const [data, setData] = useState(Data);
+  const [token, setToken] = useState(null);
+  const [result, setResult] = useState([]);
   const [song, setSong] = useState([]);
-  const [keyword, setKeyword] = useState("");
-
-  const SearchHandle = async (word) => {
-
-    setKeyword(word)
-
-    if (word === "") {
-      setData(Data)
-    } else {
-      setData(data.filter(item => item.name.toLowerCase().includes(word.toLowerCase()) || item.artist.toLowerCase().includes(word.toLowerCase())))
-    }
-  };
+  const [createPlaylist, setCreatePlaylist] = useState([]);
 
   const AddToPlaylistHandle = async (songId) => song.includes(songId) ? console.log(`Dupplicate Song`) : setSong(() => {return [...song, songId]})
 
   const RemovePlaylistHandle = async (songId) => setSong(song => song.filter(item => item.id !== songId.id))
   
+  const CreatePlayList = async (playListName) => {
+
+    if (song.length === 0) {
+      return console.log(`Please Add Song`);
+      
+    } else if (playListName === "") {
+      return console.log(`Please Provide Playlist Name`)
+
+    } else {
+      setCreatePlaylist(() => {
+        return [...createPlaylist, {name: playListName, songs: song}]
+      })
+
+      setSong([]);
+    }
+
+  }
+
+  useEffect(() => {
+    const getAccessToken = async () => {
+      const base64Credentials = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
+      const authOptions = {
+        method: 'post',
+        url: 'https://accounts.spotify.com/api/token',
+        headers: {
+          'Authorization': 'Basic ' + base64Credentials,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: 'grant_type=client_credentials'
+      };
+  
+      try {
+        const response = await axios(authOptions);
+        setToken(response.data.access_token);
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  
+    getAccessToken();
+  }, []);
+
+  const SearchHandle = async (keyword) => {
+    // const TEST = "taylor swift"
+    // const TEST2 = "Cruel Summer"
+
+    let accessParameters = {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    }
+
+    try {
+      let artistID = await fetch('https://api.spotify.com/v1/search?q=' + keyword + '&type=track', accessParameters)
+      let data = await artistID.json()
+      setResult(data.tracks.items)
+      console.log(result)
+      
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
 
   return (
-    <main className="w-screen h-screen flex flex-col items-center justify-center bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900">
-      <header className=" w-full h-auto flex flex-col items-center justify-center gap-3 p-5 ">
+    <main className="w-screen h-screen flex flex-col items-center justify-start bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900">
+      <header className=" w-full h-full flex flex-col items-center justify-center gap-3 p-5 ">
         <h1 className="text-4xl font-bold text-amber-300 m-4">Jammming application.</h1>
         <SearchBar searchFunc={SearchHandle} />
       </header>
-
-      <section className="w-4/5 h-auto flex items-center justify-center bg-transparent">
-        <SearchResults songs={data} addPlaylist={AddToPlaylistHandle} />
-        <Playlist favoriteSong={song} removePlaylist={RemovePlaylistHandle} />
+      <section className="w-4/5 h-full flex items-center justify-center bg-transparent">
+        <SearchResults tracks={result} addPlaylist={AddToPlaylistHandle} />
+        <Playlist favoriteSong={song} removePlaylist={RemovePlaylistHandle} createPL={CreatePlayList} PL={createPlaylist} playList={createPlaylist} />
       </section>
     </main>
   )
