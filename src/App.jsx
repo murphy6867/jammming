@@ -14,11 +14,15 @@ function App() {
   const [token, setToken] = useState(null);
   const [result, setResult] = useState([]);
   const [song, setSong] = useState([]);
-  const [createPlaylist, setCreatePlaylist] = useState([]);
+  const [playlist, setPlaylist] = useState([]);
 
-  const AddToPlaylistHandle = async (songId) => song.includes(songId) ? console.log(`Dupplicate Song`) : setSong(() => {return [...song, songId]})
+  const AddToPlaylistHandle = async (songId) => { 
+    song.includes(songId) ? console.log(`Dupplicate Song`) 
+    : 
+    setSong(() => {return [...song, songId]})
+  }
 
-  const RemovePlaylistHandle = async (songId) => setSong(song => song.filter(item => item.id !== songId.id))
+  const RemoveTrackHandle = async (songId) => setSong(song => song.filter(item => item.id !== songId.id))
   
   const CreatePlayList = async (playListName) => {
 
@@ -29,13 +33,32 @@ function App() {
       return console.log(`Please Provide Playlist Name`)
 
     } else {
-      setCreatePlaylist(() => {
-        return [...createPlaylist, {name: playListName, songs: song}]
+      setPlaylist(() => {
+        return [...playlist, {name: playListName, songs: song}]
       })
 
       setSong([]);
     }
 
+  }
+
+  const RemoveTrackInPlaylistHandler = (trackName, songId) => {
+   
+    let selectedPlayListIndex = playlist.findIndex(pl => pl.name === trackName);
+  
+    if (selectedPlayListIndex !== -1) {
+      
+      let filteredSongs = playlist[selectedPlayListIndex].songs.filter(song => song.id !== songId);
+
+      let newPlaylist = [...playlist];
+  
+      newPlaylist[selectedPlayListIndex].songs = filteredSongs;
+
+      setPlaylist(newPlaylist);
+      
+    } else {
+      console.log(`Playlist with name ${trackName} not found.`);
+    }
   }
 
   useEffect(() => {
@@ -98,7 +121,12 @@ function App() {
           <SearchResults tracks={result} addPlaylist={AddToPlaylistHandle} />
         </div>
         <div className="w-full h-full flex justify-center">
-          <Playlist favoriteSong={song} removePlaylist={RemovePlaylistHandle} createPL={CreatePlayList} PL={createPlaylist} playList={createPlaylist} />
+          <Playlist 
+            favoriteSong={song} 
+            removeTrack={RemoveTrackHandle} 
+            createPL={CreatePlayList} 
+            playList={playlist}
+            removeTrackInPL={RemoveTrackInPlaylistHandler} />
         </div>
       </section>
     </main>

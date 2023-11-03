@@ -10,7 +10,9 @@ const Playlist = (props) => {
   return (
     <div className='w-4/5 h-full px-4'>
       <h1 className='text-3xl text-white font-bold my-3'>Playlist</h1>
-      <TrackList PlayList={props.playList} />
+      <TrackList 
+        PlayList={props.playList} 
+        removeTrackInPL={props.removeTrackInPL} />
 
       <input type="text" 
         className='py-3 px-3 rounded-xl w-full'
@@ -23,7 +25,7 @@ const Playlist = (props) => {
             <h2 className='text-stone-400'>{song.artist}</h2>
           </div>
         <button 
-          onClick={() => props.removePlaylist(song)}
+          onClick={() => props.removeTrack(song)}
           className='w-8 h-8 rounded-full text-white border-2 hover:bg-white hover:text-black'
           >-</button>
       </div>
